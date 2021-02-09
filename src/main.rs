@@ -9,6 +9,7 @@ mod jwt;
 use crate::error::Result;
 
 #[derive(Debug, StructOpt)]
+#[structopt(global_setting = structopt::clap::AppSettings::ColoredHelp)]
 /// Encode and decode JSON web tokens
 enum Command {
     /// Decodes a JSON web token
