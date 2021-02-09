@@ -20,3 +20,38 @@ pub fn encode<R: io::Read, W: io::Write>(input: &mut R, output: &mut W) -> Resul
     write!(output, "{}", token)?;
     Ok(())
 }
+
+#[cfg(test)]
+mod tests {
+    use std::fs;
+    use std::path::PathBuf;
+
+    use super::{decode, encode};
+
+    fn get_test_dir() -> PathBuf {
+        let mut test_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
+        test_dir.push("test");
+        test_dir
+    }
+
+    #[test]
+    fn test_decode() {
+        let test_dir = get_test_dir();
+        let mut input = fs::File::open(test_dir.join("example.jwt")).unwrap();
+        let expected = fs::read(test_dir.join("example.json")).unwrap();
+        let mut output = Vec::new();
+        decode(&mut input, &mut output).unwrap();
+        assert_eq!(expected, output);
+    }
+
+    #[test]
+    fn test_encode() {
+        let test_dir = get_test_dir();
+        let input = fs::read(test_dir.join("example.json")).unwrap();
+        let mut encoded = Vec::new();
+        encode(&mut &input[..], &mut encoded).unwrap();
+        let mut output = Vec::new();
+        decode(&mut &encoded[..], &mut output).unwrap();
+        assert_eq!(input, output);
+    }
+}
