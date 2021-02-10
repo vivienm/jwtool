@@ -25,7 +25,7 @@ Headers are not displayed.
 You may install `jwtool` locally by running
 
 ```console
-$ cargo install https://github.com/vivienm/jwtool.git
+$ cargo install --git https://github.com/vivienm/jwtool.git
 ```
 
 ### Autocompletion
