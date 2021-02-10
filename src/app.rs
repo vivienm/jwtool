@@ -1,5 +1,6 @@
+use std::fs;
+use std::io;
 use std::path::Path;
-use std::{fs, io};
 
 use structopt::clap::crate_name;
 use structopt::StructOpt;
