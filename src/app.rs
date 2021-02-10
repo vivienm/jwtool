@@ -8,19 +8,23 @@ use crate::cli;
 use crate::error::Result;
 use crate::jwt;
 
+fn path_is_dash<P: AsRef<Path>>(path: P) -> bool {
+    path.as_ref().as_os_str() == "-"
+}
+
 fn get_read<P: AsRef<Path>>(input: P) -> Result<Box<dyn io::Read>> {
-    Ok(if input.as_ref() == Path::new("-") {
+    Ok(if path_is_dash(&input) {
         Box::new(io::stdin())
     } else {
-        Box::new(fs::File::open(input)?)
+        Box::new(fs::File::open(&input)?)
     })
 }
 
 fn get_write<P: AsRef<Path>>(output: P) -> Result<Box<dyn io::Write>> {
-    Ok(if output.as_ref() == Path::new("-") {
+    Ok(if path_is_dash(&output) {
         Box::new(io::stdout())
     } else {
-        Box::new(fs::File::create(output)?)
+        Box::new(fs::File::create(&output)?)
     })
 }
 
@@ -37,4 +41,19 @@ pub fn main(command: cli::Command) -> Result<()> {
         }
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use std::path::Path;
+
+    use super::path_is_dash;
+
+    #[test]
+    fn test_path_is_dash() {
+        assert!(path_is_dash(Path::new("-")));
+        assert!(!path_is_dash(Path::new("--")));
+        assert!(!path_is_dash(Path::new(".")));
+        assert!(!path_is_dash(Path::new("/tmp/foo")));
+    }
 }
