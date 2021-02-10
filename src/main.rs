@@ -1,12 +1,12 @@
 use structopt::StructOpt;
 
 mod app;
+mod cli;
 mod error;
 mod jwt;
 
 use crate::error::Result;
 
 fn main() -> Result<()> {
-    let command = app::Command::from_args();
-    app::main(command)
+    app::main(cli::Command::from_args())
 }
