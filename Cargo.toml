@@ -4,8 +4,10 @@ version = "0.1.0"
 authors = ["Vivien Maisonneuve <v.maisonneuve@gmail.com>"]
 description = "Encode and decode JSON web tokens"
 edition = "2018"
+build = "build.rs"
 
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+[build-dependencies]
+structopt = "0.3.21"
 
 [dependencies]
 derive_more = "0.99.11"
