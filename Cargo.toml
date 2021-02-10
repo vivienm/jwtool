@@ -2,8 +2,11 @@
 name = "jwtool"
 version = "0.1.0"
 authors = ["Vivien Maisonneuve <v.maisonneuve@gmail.com>"]
-description = "Encode and decode JSON web tokens"
 edition = "2018"
+description = "Encode and decode JSON web tokens"
+readme = "README.md"
+repository = "https://github.com/vivienm/jwtool.git"
+license = "MIT"
 build = "build.rs"
 
 [build-dependencies]
