@@ -1,6 +1,9 @@
 use std::path::Path;
 use std::{fs, io};
 
+use structopt::clap::crate_name;
+use structopt::StructOpt;
+
 use crate::cli;
 use crate::error::Result;
 use crate::jwt;
@@ -28,6 +31,9 @@ pub fn main(command: cli::Command) -> Result<()> {
         }
         cli::Command::Encode { input, output } => {
             jwt::encode(&mut get_read(&input)?, &mut get_write(output)?)?;
+        }
+        cli::Command::Completion { shell, output } => {
+            cli::Command::clap().gen_completions_to(crate_name!(), shell, &mut get_write(output)?);
         }
     }
     Ok(())
