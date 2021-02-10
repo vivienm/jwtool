@@ -1,6 +1,6 @@
 # jwtool
 
-This is a small tool to convert JSON Web Tokens from and to JSON.
+This is a small tool to convert JSON Web Tokens from and to plain JSON.
 
 ```console
 $ cat test/example.jwt
