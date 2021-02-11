@@ -1,8 +1,8 @@
-on:
-- push
-- pull_request
-
 name: Continuous integration
+
+on:
+  push:
+  pull_request:
 
 jobs:
   check:
@@ -64,3 +64,12 @@ jobs:
       with:
         command: clippy
         args: -- -D warnings
+
+  audit:
+    name: Audit
+    runs-on: ubuntu-latest
+    steps:
+    - uses: actions/checkout@v1
+    - uses: actions-rs/audit-check@v1
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
