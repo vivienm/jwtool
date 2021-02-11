@@ -12,7 +12,7 @@ fn main() {
     fs::create_dir_all(&output_dir).unwrap();
 
     let mut clap = cli::Command::clap();
-    for shell in vec![Shell::Bash, Shell::Fish, Shell::Zsh] {
-        clap.gen_completions(crate_name!(), shell, &output_dir);
+    for shell in &[Shell::Bash, Shell::Fish, Shell::Zsh] {
+        clap.gen_completions(crate_name!(), *shell, &output_dir);
     }
 }
