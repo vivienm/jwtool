@@ -29,9 +29,7 @@ mod tests {
     use super::{decode, encode};
 
     fn get_test_dir() -> PathBuf {
-        let mut test_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-        test_dir.push("tests");
-        test_dir
+        PathBuf::from(env!("CARGO_MANIFEST_DIR")).join("tests")
     }
 
     #[test]
