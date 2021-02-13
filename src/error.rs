@@ -7,5 +7,4 @@ pub enum Error {
     Jwt(jsonwebtoken::errors::Error),
 }
 
-#[must_use]
 pub type Result<T> = std::result::Result<T, Error>;
