@@ -3,17 +3,17 @@
 This is a small tool that converts JSON Web Tokens from and to plain JSON.
 
 ```console
-$ cat test/example.jwt
+$ cat tests/example.jwt
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
-$ jwtool decode test/example.jwt | tee test/example.json
+$ jwtool decode tests/example.jwt | tee tests/example.json
 {
   "iat": 1516239022,
   "name": "John Doe",
   "sub": "1234567890"
 }
 
-$ jwtool encode test/example.json
+$ jwtool encode tests/example.json
 eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9...
 ```
 

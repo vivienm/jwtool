@@ -30,7 +30,7 @@ mod tests {
 
     fn get_test_dir() -> PathBuf {
         let mut test_dir = PathBuf::from(env!("CARGO_MANIFEST_DIR"));
-        test_dir.push("test");
+        test_dir.push("tests");
         test_dir
     }
 
