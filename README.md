@@ -1,12 +1,12 @@
 # jwtool
 
-This is a small tool to convert JSON Web Tokens from and to plain JSON.
+This is a small tool that converts JSON Web Tokens from and to plain JSON.
 
 ```console
 $ cat test/example.jwt
 eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...
 
-$ jwtool decode test/example.jwt
+$ jwtool decode test/example.jwt | tee test/example.json
 {
   "iat": 1516239022,
   "name": "John Doe",
