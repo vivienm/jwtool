@@ -29,16 +29,16 @@ fn get_write<P: AsRef<Path>>(output: P) -> Result<Box<dyn io::Write>> {
     })
 }
 
-pub fn main(command: cli::Command) -> Result<()> {
-    match command {
-        cli::Command::Decode { input, output } => {
+pub fn main(args: cli::Args) -> Result<()> {
+    match args {
+        cli::Args::Decode { input, output } => {
             jwt::decode(&mut get_read(&input)?, &mut get_write(output)?)?;
         }
-        cli::Command::Encode { input, output } => {
+        cli::Args::Encode { input, output } => {
             jwt::encode(&mut get_read(&input)?, &mut get_write(output)?)?;
         }
-        cli::Command::Completion { shell, output } => {
-            cli::Command::clap().gen_completions_to(crate_name!(), shell, &mut get_write(output)?);
+        cli::Args::Completion { shell, output } => {
+            cli::Args::clap().gen_completions_to(crate_name!(), shell, &mut get_write(output)?);
         }
     }
     Ok(())

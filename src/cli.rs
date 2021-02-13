@@ -6,7 +6,7 @@ use structopt::StructOpt;
 #[derive(Debug, StructOpt)]
 #[structopt(global_setting = structopt::clap::AppSettings::ColoredHelp)]
 /// Encode and decode JSON web tokens
-pub enum Command {
+pub enum Args {
     /// Decodes a JSON web token
     Decode {
         /// Input file

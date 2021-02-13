@@ -8,5 +8,5 @@ mod jwt;
 use crate::error::Result;
 
 fn main() -> Result<()> {
-    app::main(cli::Command::from_args())
+    app::main(cli::Args::from_args())
 }
