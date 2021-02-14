@@ -1,6 +1,7 @@
 use std::ffi;
 use std::fmt;
 use std::path::PathBuf;
+use std::str::FromStr;
 
 use structopt::clap::Shell;
 use structopt::StructOpt;
@@ -60,6 +61,42 @@ impl fmt::Display for Output {
     }
 }
 
+#[derive(Debug)]
+pub enum ColorMode {
+    Always,
+    Never,
+    Auto,
+}
+
+impl Default for ColorMode {
+    fn default() -> Self {
+        ColorMode::Auto
+    }
+}
+
+impl FromStr for ColorMode {
+    type Err = &'static str;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        match value {
+            "always" => Ok(Self::Always),
+            "never" => Ok(Self::Never),
+            "auto" => Ok(Self::Auto),
+            _ => Err("[valid values: always, never, auto]"),
+        }
+    }
+}
+
+impl fmt::Display for ColorMode {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            Self::Always => write!(f, "always"),
+            Self::Never => write!(f, "never"),
+            Self::Auto => write!(f, "auto"),
+        }
+    }
+}
+
 #[derive(Debug, StructOpt)]
 #[structopt(global_setting = structopt::clap::AppSettings::ColoredHelp)]
 /// Encode and decode JSON web tokens
@@ -72,6 +109,9 @@ pub enum Args {
         /// Output file
         #[structopt(parse(from_os_str), default_value = "-")]
         output: Output,
+        /// Color mode
+        #[structopt(short = "c", long = "color", default_value = "auto")]
+        color: ColorMode,
     },
     /// Encodes a JSON web token
     Encode {

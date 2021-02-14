@@ -24,8 +24,12 @@ fn get_write(output: &cli::Output) -> Result<Box<dyn io::Write>> {
 
 pub fn main(args: cli::Args) -> Result<()> {
     match args {
-        cli::Args::Decode { input, output } => {
-            jwt::decode(&mut get_read(&input)?, &mut get_write(&output)?)?;
+        cli::Args::Decode {
+            input,
+            output,
+            color,
+        } => {
+            jwt::decode(&mut get_read(&input)?, &mut get_write(&output)?, &color)?;
         }
         cli::Args::Encode { input, output } => {
             jwt::encode(&mut get_read(&input)?, &mut get_write(&output)?)?;
