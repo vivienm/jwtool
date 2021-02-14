@@ -1,4 +1,4 @@
-use colored_json::to_colored_json;
+use colored_json::write_colored_json_with_mode;
 use std::io;
 
 use crate::cli::ColorMode;
@@ -22,7 +22,8 @@ pub fn decode<R: io::Read, W: io::Write>(
     let mut token = String::new();
     input.read_to_string(&mut token)?;
     let value: serde_json::Value = jsonwebtoken::dangerous_insecure_decode(&token)?.claims;
-    writeln!(output, "{}", to_colored_json(&value, color.into())?)?;
+    write_colored_json_with_mode(&value, output, color.into())?;
+    writeln!(output)?;
     Ok(())
 }
 
