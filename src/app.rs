@@ -28,8 +28,14 @@ pub fn main(args: cli::Args) -> Result<()> {
             input,
             output,
             color,
+            format,
         } => {
-            jwt::decode(&mut get_read(&input)?, &mut get_write(&output)?, &color)?;
+            jwt::decode(
+                &mut get_read(&input)?,
+                &mut get_write(&output)?,
+                &color,
+                &format,
+            )?;
         }
         cli::Args::Encode { input, output } => {
             jwt::encode(&mut get_read(&input)?, &mut get_write(&output)?)?;

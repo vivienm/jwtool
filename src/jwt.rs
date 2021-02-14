@@ -1,7 +1,9 @@
-use colored_json::write_colored_json_with_mode;
 use std::io;
 
-use crate::cli::ColorMode;
+use colored_json::{ColoredFormatter, CompactFormatter, PrettyFormatter};
+use serde::Serialize;
+
+use crate::cli::{ColorMode, JsonFormat};
 use crate::error::Result;
 
 impl From<&ColorMode> for colored_json::ColorMode {
@@ -14,17 +16,45 @@ impl From<&ColorMode> for colored_json::ColorMode {
     }
 }
 
+fn serialize<F: serde_json::ser::Formatter, W: io::Write>(
+    value: &serde_json::Value,
+    formatter: F,
+    output: &mut W,
+) -> Result<()> {
+    let mut serializer = serde_json::Serializer::with_formatter(output, formatter);
+    value.serialize(&mut serializer)?;
+    writeln!(serializer.into_inner())?;
+    Ok(())
+}
+
 pub fn decode<R: io::Read, W: io::Write>(
     input: &mut R,
     output: &mut W,
     color: &ColorMode,
+    format: &JsonFormat,
 ) -> Result<()> {
     let mut token = String::new();
     input.read_to_string(&mut token)?;
     let value: serde_json::Value = jsonwebtoken::dangerous_insecure_decode(&token)?.claims;
-    write_colored_json_with_mode(&value, output, color.into())?;
-    writeln!(output)?;
-    Ok(())
+    let use_color = colored_json::ColorMode::from(color).use_color();
+    match (use_color, format) {
+        (false, JsonFormat::Compact) => {
+            let formatter = CompactFormatter {};
+            serialize(&value, formatter, output)
+        }
+        (false, JsonFormat::Pretty) => {
+            let formatter = PrettyFormatter::new();
+            serialize(&value, formatter, output)
+        }
+        (true, JsonFormat::Compact) => {
+            let formatter = ColoredFormatter::new(CompactFormatter {});
+            serialize(&value, formatter, output)
+        }
+        (true, JsonFormat::Pretty) => {
+            let formatter = ColoredFormatter::new(PrettyFormatter::new());
+            serialize(&value, formatter, output)
+        }
+    }
 }
 
 pub fn encode<R: io::Read, W: io::Write>(input: &mut R, output: &mut W) -> Result<()> {
@@ -43,7 +73,7 @@ mod tests {
     use std::fs;
     use std::path::PathBuf;
 
-    use crate::cli::ColorMode;
+    use crate::cli::{ColorMode, JsonFormat};
 
     use super::{decode, encode};
 
@@ -57,7 +87,13 @@ mod tests {
         let mut input = fs::File::open(test_dir.join("example.jwt")).unwrap();
         let expected = fs::read(test_dir.join("example.json")).unwrap();
         let mut output = Vec::new();
-        decode(&mut input, &mut output, &ColorMode::Never).unwrap();
+        decode(
+            &mut input,
+            &mut output,
+            &ColorMode::Never,
+            &JsonFormat::Pretty,
+        )
+        .unwrap();
         assert_eq!(expected, output);
     }
 
@@ -68,7 +104,13 @@ mod tests {
         let mut encoded = Vec::new();
         encode(&mut &input[..], &mut encoded).unwrap();
         let mut output = Vec::new();
-        decode(&mut &encoded[..], &mut output, &ColorMode::Never).unwrap();
+        decode(
+            &mut &encoded[..],
+            &mut output,
+            &ColorMode::Never,
+            &JsonFormat::Pretty,
+        )
+        .unwrap();
         assert_eq!(input, output);
     }
 }

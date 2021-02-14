@@ -82,7 +82,7 @@ impl FromStr for ColorMode {
             "always" => Ok(Self::Always),
             "never" => Ok(Self::Never),
             "auto" => Ok(Self::Auto),
-            _ => Err("[valid values: always, never, auto]"),
+            _ => Err("valid values: always, never, auto"),
         }
     }
 }
@@ -103,18 +103,45 @@ impl ColorMode {
     }
 }
 
+#[derive(Debug)]
+pub enum JsonFormat {
+    Pretty,
+    Compact,
+}
+
+impl FromStr for JsonFormat {
+    type Err = &'static str;
+
+    fn from_str(value: &str) -> Result<Self, Self::Err> {
+        match value {
+            "pretty" => Ok(Self::Pretty),
+            "compact" => Ok(Self::Compact),
+            _ => Err("valid values: pretty, compact"),
+        }
+    }
+}
+
+impl fmt::Display for JsonFormat {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
+        match self {
+            Self::Pretty => write!(f, "pretty"),
+            Self::Compact => write!(f, "compact"),
+        }
+    }
+}
+
+impl JsonFormat {
+    pub fn variants() -> [&'static str; 2] {
+        ["pretty", "compact"]
+    }
+}
+
 #[derive(Debug, StructOpt)]
 #[structopt(global_setting = structopt::clap::AppSettings::ColoredHelp)]
 /// Encode and decode JSON web tokens
 pub enum Args {
     /// Decodes a JSON web token
     Decode {
-        /// Input file
-        #[structopt(parse(from_os_str))]
-        input: Input,
-        /// Output file
-        #[structopt(parse(from_os_str), default_value = "-")]
-        output: Output,
         /// Color mode
         #[structopt(
             short = "c",
@@ -123,6 +150,20 @@ pub enum Args {
             possible_values = &ColorMode::variants(),
         )]
         color: ColorMode,
+        /// Formatting
+        #[structopt(
+            short = "f",
+            long = "format",
+            default_value = "pretty",
+            possible_values = &JsonFormat::variants()
+        )]
+        format: JsonFormat,
+        /// Input file
+        #[structopt(parse(from_os_str))]
+        input: Input,
+        /// Output file
+        #[structopt(parse(from_os_str), default_value = "-")]
+        output: Output,
     },
     /// Encodes a JSON web token
     Encode {

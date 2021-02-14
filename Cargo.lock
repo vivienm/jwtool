@@ -177,6 +177,7 @@ dependencies = [
  "colored_json",
  "derive_more",
  "jsonwebtoken",
+ "serde",
  "serde_json",
  "structopt",
 ]
