@@ -97,6 +97,12 @@ impl fmt::Display for ColorMode {
     }
 }
 
+impl ColorMode {
+    pub fn variants() -> [&'static str; 3] {
+        ["always", "never", "auto"]
+    }
+}
+
 #[derive(Debug, StructOpt)]
 #[structopt(global_setting = structopt::clap::AppSettings::ColoredHelp)]
 /// Encode and decode JSON web tokens
@@ -110,7 +116,12 @@ pub enum Args {
         #[structopt(parse(from_os_str), default_value = "-")]
         output: Output,
         /// Color mode
-        #[structopt(short = "c", long = "color", default_value = "auto")]
+        #[structopt(
+            short = "c",
+            long = "color",
+            default_value = "auto",
+            possible_values = &ColorMode::variants(),
+        )]
         color: ColorMode,
     },
     /// Encodes a JSON web token
@@ -125,6 +136,7 @@ pub enum Args {
     /// Generates a completion file
     Completion {
         /// Shell to produce a completion file for
+        #[structopt(possible_values = &Shell::variants())]
         shell: Shell,
         /// Output file
         #[structopt(parse(from_os_str), default_value = "-")]
