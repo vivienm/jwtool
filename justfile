@@ -7,6 +7,9 @@ build:
 run +args="":
     {{cargo}} run -- {{args}}
 
+clean:
+    rm -fr "{{justfile_directory()}}/target"
+
 install:
     {{cargo}} install --path "{{justfile_directory()}}"
 
