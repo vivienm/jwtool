@@ -11,7 +11,7 @@ fn is_dash(value: &ffi::OsStr) -> bool {
     value == "-"
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Input {
     Stdin,
     Path(PathBuf),
@@ -36,7 +36,7 @@ impl fmt::Display for Input {
     }
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq)]
 pub enum Output {
     Stdout,
     Path(PathBuf),
@@ -183,4 +183,55 @@ pub enum Args {
         #[structopt(parse(from_os_str), default_value = "-")]
         output: Output,
     },
+}
+
+#[cfg(test)]
+mod tests {
+    use std::ffi::OsStr;
+    use std::path::Path;
+    use std::str::FromStr;
+
+    use super::{ColorMode, Input, JsonFormat, Output};
+
+    #[test]
+    fn test_input_from() {
+        assert_eq!(Input::from(OsStr::new("-")), Input::Stdin);
+        for path in &["--", "/tmp/foo"] {
+            assert_eq!(
+                Input::from(OsStr::new(path)),
+                Input::Path(Path::new(path).to_owned())
+            );
+        }
+    }
+
+    #[test]
+    fn test_output_from() {
+        assert_eq!(Output::from(OsStr::new("-")), Output::Stdout);
+        for path in &["--", "/tmp/foo"] {
+            assert_eq!(
+                Output::from(OsStr::new(path)),
+                Output::Path(Path::new(path).to_owned())
+            );
+        }
+    }
+
+    #[test]
+    fn test_color_mode() {
+        for variant in &ColorMode::variants() {
+            assert_eq!(
+                format!("{}", ColorMode::from_str(variant).unwrap()),
+                *variant
+            );
+        }
+    }
+
+    #[test]
+    fn test_json_format() {
+        for variant in &JsonFormat::variants() {
+            assert_eq!(
+                format!("{}", JsonFormat::from_str(variant).unwrap()),
+                *variant
+            );
+        }
+    }
 }
