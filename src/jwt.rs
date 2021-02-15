@@ -3,18 +3,8 @@ use std::io;
 use colored_json::{ColoredFormatter, CompactFormatter, PrettyFormatter};
 use serde::Serialize;
 
-use crate::cli::{ColorMode, JsonFormat};
+use crate::cli::JsonFormat;
 use crate::error::Result;
-
-impl From<&ColorMode> for colored_json::ColorMode {
-    fn from(color: &ColorMode) -> Self {
-        match color {
-            ColorMode::Always => Self::On,
-            ColorMode::Never => Self::Off,
-            ColorMode::Auto => Self::Auto(colored_json::Output::StdOut),
-        }
-    }
-}
 
 fn serialize<F: serde_json::ser::Formatter, W: io::Write>(
     value: &serde_json::Value,
@@ -30,14 +20,13 @@ fn serialize<F: serde_json::ser::Formatter, W: io::Write>(
 pub fn decode<R: io::Read, W: io::Write>(
     input: &mut R,
     output: &mut W,
-    color: &ColorMode,
+    color: bool,
     format: &JsonFormat,
 ) -> Result<()> {
     let mut token = String::new();
     input.read_to_string(&mut token)?;
     let value: serde_json::Value = jsonwebtoken::dangerous_insecure_decode(&token)?.claims;
-    let use_color = colored_json::ColorMode::from(color).use_color();
-    match (use_color, format) {
+    match (color, format) {
         (false, JsonFormat::Compact) => {
             let formatter = CompactFormatter {};
             serialize(&value, formatter, output)
@@ -73,7 +62,7 @@ mod tests {
     use std::fs;
     use std::path::PathBuf;
 
-    use crate::cli::{ColorMode, JsonFormat};
+    use crate::cli::JsonFormat;
 
     use super::{decode, encode};
 
@@ -87,13 +76,7 @@ mod tests {
         let mut input = fs::File::open(test_dir.join("example.jwt")).unwrap();
         let expected = fs::read(test_dir.join("example.json")).unwrap();
         let mut output = Vec::new();
-        decode(
-            &mut input,
-            &mut output,
-            &ColorMode::Never,
-            &JsonFormat::Pretty,
-        )
-        .unwrap();
+        decode(&mut input, &mut output, false, &JsonFormat::Pretty).unwrap();
         assert_eq!(expected, output);
     }
 
@@ -104,13 +87,7 @@ mod tests {
         let mut encoded = Vec::new();
         encode(&mut &input[..], &mut encoded).unwrap();
         let mut output = Vec::new();
-        decode(
-            &mut &encoded[..],
-            &mut output,
-            &ColorMode::Never,
-            &JsonFormat::Pretty,
-        )
-        .unwrap();
+        decode(&mut &encoded[..], &mut output, false, &JsonFormat::Pretty).unwrap();
         assert_eq!(input, output);
     }
 }

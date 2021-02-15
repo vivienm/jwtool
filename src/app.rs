@@ -8,6 +8,21 @@ use crate::cli;
 use crate::error::Result;
 use crate::jwt;
 
+impl cli::ColorMode {
+    pub fn use_color(&self, output: &cli::Output) -> bool {
+        match self {
+            Self::Always => true,
+            Self::Never => false,
+            Self::Auto => match output {
+                cli::Output::Stdout => {
+                    colored_json::ColorMode::Auto(colored_json::Output::StdOut).use_color()
+                }
+                cli::Output::Path(_) => false,
+            },
+        }
+    }
+}
+
 fn get_read(input: &cli::Input) -> Result<Box<dyn io::Read>> {
     Ok(match input {
         cli::Input::Stdin => Box::new(io::stdin()),
@@ -33,7 +48,7 @@ pub fn main(args: cli::Args) -> Result<()> {
             jwt::decode(
                 &mut get_read(&input)?,
                 &mut get_write(&output)?,
-                &color,
+                color.use_color(&output),
                 &format,
             )?;
         }
