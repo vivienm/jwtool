@@ -9,7 +9,7 @@ use crate::error::Result;
 use crate::jwt;
 
 impl cli::ColorMode {
-    pub fn use_color(&self, output: &cli::Output) -> bool {
+    fn use_color(&self, output: &cli::Output) -> bool {
         match self {
             Self::Always => true,
             Self::Never => false,
