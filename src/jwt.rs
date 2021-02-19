@@ -61,6 +61,7 @@ pub fn encode<R: io::Read, W: io::Write>(input: &mut R, output: &mut W) -> Resul
 mod tests {
     use std::fs;
     use std::path::PathBuf;
+    use std::str;
 
     use crate::cli::JsonFormat;
 
@@ -77,7 +78,10 @@ mod tests {
         let expected = fs::read(test_dir.join("example.json")).unwrap();
         let mut output = Vec::new();
         decode(&mut input, &mut output, false, &JsonFormat::Pretty).unwrap();
-        assert_eq!(expected, output);
+        assert_eq!(
+            str::from_utf8(&expected).unwrap(),
+            str::from_utf8(&output).unwrap()
+        );
     }
 
     #[test]
@@ -88,6 +92,9 @@ mod tests {
         encode(&mut &input[..], &mut encoded).unwrap();
         let mut output = Vec::new();
         decode(&mut &encoded[..], &mut output, false, &JsonFormat::Pretty).unwrap();
-        assert_eq!(input, output);
+        assert_eq!(
+            str::from_utf8(&input).unwrap(),
+            str::from_utf8(&output).unwrap()
+        );
     }
 }
