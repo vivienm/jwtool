@@ -1,6 +1,6 @@
-use std::fs;
 use std::io;
 
+use fs_err as fs;
 use structopt::clap::crate_name;
 use structopt::StructOpt;
 

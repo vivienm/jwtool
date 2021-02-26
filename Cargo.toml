@@ -15,6 +15,7 @@ structopt = "0.3.21"
 [dependencies]
 colored_json = "2.1.0"
 derive_more = "0.99.11"
+fs-err = "2.5.0"
 jsonwebtoken = "7.2.0"
 serde = "1.0.123"
 serde_json = { version = "1.0.62", features = ["preserve_order"] }

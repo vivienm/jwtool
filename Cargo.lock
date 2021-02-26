@@ -124,6 +124,12 @@ dependencies = [
 ]
 
 [[package]]
+name = "fs-err"
+version = "2.5.0"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bcd1163ae48bda72a20ae26d66a04d3094135cadab911cff418ae5e33f253431"
+
+[[package]]
 name = "hashbrown"
 version = "0.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -192,6 +198,7 @@ version = "0.1.0"
 dependencies = [
  "colored_json",
  "derive_more",
+ "fs-err",
  "jsonwebtoken",
  "serde",
  "serde_json",
